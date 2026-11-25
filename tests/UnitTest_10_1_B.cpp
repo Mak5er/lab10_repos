@@ -1,6 +1,6 @@
 // UnitTest_10_1_B.cpp
-// Рева Максим
-// Модульний тест для Lab_10_1_B.cpp (структура з об'єднанням union)
+// Reva Maksym
+// Unit test for Lab_10_1_B.cpp (union)
 
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
@@ -13,11 +13,11 @@ TEST_SUITE("UnitTest_10_1_B")
 {
     TEST_CASE("GetThirdGrade and IsWithoutThrees work across all specialties and union fields")
     {
-        Student kn{"Іваненко", 1, KN, 5, 4, {5}};
-        Student inf{"Петренко", 2, INF, 4, 4, {4}};
-        Student me{"Коваленко", 3, ME, 5, 5, {3}};
-        Student fi{"Мельник", 2, FI, 4, 5, {5}};
-        Student tn{"Ткач", 1, TN, 4, 4, {2}};
+        Student kn{"Ivanenko", 1, KN, 5, 4, {5}};
+        Student inf{"Petrenko", 2, INF, 4, 4, {4}};
+        Student me{"Kovalenko", 3, ME, 5, 5, {3}};
+        Student fi{"Melnyk", 2, FI, 4, 5, {5}};
+        Student tn{"Tkach", 1, TN, 4, 4, {2}};
 
         CHECK(GetThirdGrade(kn) == 5);
         CHECK(GetThirdGrade(inf) == 4);
@@ -35,9 +35,9 @@ TEST_SUITE("UnitTest_10_1_B")
     TEST_CASE("CountPhysicsFive counts students with physics grade 5")
     {
         Student group[3] = {
-            {"Іваненко", 1, KN, 5, 5, {5}},
-            {"Петренко", 2, INF, 5, 4, {4}},
-            {"Бондар", 3, TN, 4, 5, {5}}
+            {"Ivanenko", 1, KN, 5, 5, {5}},
+            {"Petrenko", 2, INF, 5, 4, {4}},
+            {"Bondar", 3, TN, 4, 5, {5}}
         };
         CHECK(CountPhysicsFive(group, 3) == 2);
     }

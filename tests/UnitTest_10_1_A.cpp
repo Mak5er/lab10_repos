@@ -1,6 +1,6 @@
 // UnitTest_10_1_A.cpp
-// Рева Максим
-// Модульний тест для Lab_10_1_A.cpp
+// Reva Maksym
+// Unit test for Lab_10_1_A.cpp
 
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
@@ -13,10 +13,10 @@ TEST_SUITE("UnitTest_10_1_A")
 {
     TEST_CASE("IsWithoutThrees checks grades 4 and 5 only")
     {
-        Student s1{"Іваненко", 1, KN, 5, 5, 5};
-        Student s2{"Петренко", 2, INF, 4, 5, 4};
-        Student s3{"Коваленко", 3, ME, 5, 3, 5};
-        Student s4{"Мельник", 4, FI, 4, 4, 2};
+        Student s1{"Ivanenko", 1, KN, 5, 5, 5};
+        Student s2{"Petrenko", 2, INF, 4, 5, 4};
+        Student s3{"Kovalenko", 3, ME, 5, 3, 5};
+        Student s4{"Melnyk", 4, FI, 4, 4, 2};
 
         CHECK(IsWithoutThrees(s1) == true);
         CHECK(IsWithoutThrees(s2) == true);
@@ -27,16 +27,16 @@ TEST_SUITE("UnitTest_10_1_A")
     TEST_CASE("CountPhysicsFive counts exact grade 5 in physics")
     {
         Student group[4] = {
-            {"Іваненко", 1, KN, 5, 4, 4},
-            {"Петренко", 2, INF, 4, 5, 5},
-            {"Сидоренко", 3, ME, 5, 3, 4},
-            {"Бондар", 1, TN, 3, 4, 5}
+            {"Ivanenko", 1, KN, 5, 4, 4},
+            {"Petrenko", 2, INF, 4, 5, 5},
+            {"Sydorenko", 3, ME, 5, 3, 4},
+            {"Bondar", 1, TN, 3, 4, 5}
         };
         CHECK(CountPhysicsFive(group, 4) == 2);
 
         Student none[2] = {
-            {"Авраменко", 1, KN, 4, 5, 5},
-            {"Гнатюк", 2, FI, 3, 4, 4}
+            {"Avramenko", 1, KN, 4, 5, 5},
+            {"Hnatiuk", 2, FI, 3, 4, 4}
         };
         CHECK(CountPhysicsFive(none, 2) == 0);
     }

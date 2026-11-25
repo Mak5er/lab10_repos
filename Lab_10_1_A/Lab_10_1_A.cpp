@@ -1,26 +1,17 @@
 // Lab_10_1_A.cpp
-// Рева Максим
-// Лабораторна робота № 10.1 (Рівень А)
-// Послідовний пошук в масиві структур (без об'єднань)
-// Варіант 23
+// Reva Maksym, RI-13, Variant 23
+// Lab 10.1 (Level A): Sequential search in array of structures
 
 #include <cstdlib>
 #include <ctime>
-#include <iostream>
 #include <iomanip>
+#include <iostream>
 #include <limits>
 #include <string>
 
 using namespace std;
 
-enum Specialnist
-{
-    KN,
-    INF,
-    ME,
-    FI,
-    TN
-};
+enum Specialnist { KN, INF, ME, FI, TN };
 
 struct Student
 {
@@ -32,186 +23,86 @@ struct Student
     int informatyka;
 };
 
-// Підрахунок кількості видимих символів у UTF-8 рядку для вирівнювання таблиці
-int Utf8Len(const string& s)
-{
-    int count = 0;
-    for (unsigned char c : s)
-        if ((c & 0xC0) != 0x80)
-            count++;
-    return count;
-}
-
-// Форматування рядка з вирівнюванням ліворуч із урахуванням UTF-8
-string PadLeft(const string& s, int width)
-{
-    int len = Utf8Len(s);
-    if (len >= width)
-        return s;
-    return s + string(width - len, ' ');
-}
-
-// Перетворення переліку спеціальності у текстову назву (без глобальних змінних)
 string SpecToStr(Specialnist spec)
 {
     switch (spec)
     {
-    case KN:
-        return "Комп'ютерні науки";
-    case INF:
-        return "Інформатика";
-    case ME:
-        return "Математика та економіка";
-    case FI:
-        return "Фізика та інформатика";
-    case TN:
-        return "Трудове навчання";
-    default:
-        return "Невідома";
+    case KN:  return "Komp. nauky";
+    case INF: return "Informatyka";
+    case ME:  return "Mat. ta ekon.";
+    case FI:  return "Fiz. ta inf.";
+    case TN:  return "Trud. navch.";
+    default:  return "Unknown";
     }
 }
 
-// Безпечне зчитування цілого числа у заданому діапазоні [minVal; maxVal]
-int ReadIntInRange(const string& prompt, int minVal, int maxVal)
+int ReadInt(const string& prompt, int minVal, int maxVal)
 {
-    int value = 0;
+    int val = 0;
     while (true)
     {
         cout << prompt;
-        if (cin >> value && value >= minVal && value <= maxVal)
+        if (cin >> val && val >= minVal && val <= maxVal)
         {
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            return value;
+            return val;
         }
-        cout << "Помилка! Введіть ціле число від " << minVal
-             << " до " << maxVal << "." << endl;
+        cout << "Error! Enter integer [" << minVal << ".." << maxVal << "]." << endl;
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
     }
 }
 
-// Безпечне зчитування непорожнього текстового рядка
-string ReadNonEmptyLine(const string& prompt)
+string ReadLine(const string& prompt)
 {
-    string line;
+    string s;
     while (true)
     {
         cout << prompt;
-        getline(cin, line);
-        if (!line.empty() && line.back() == '\r')
-            line.pop_back();
-        if (!line.empty())
-            return line;
-        cout << "Помилка! Рядок не може бути порожнім." << endl;
+        getline(cin, s);
+        if (!s.empty() && s.back() == '\r')
+            s.pop_back();
+        if (!s.empty())
+            return s;
+        cout << "Error! String cannot be empty." << endl;
     }
 }
 
-// Формування масиву структур студентів з клавіатури
 void Create(Student* p, const int N)
 {
     for (int i = 0; i < N; i++)
     {
-        cout << "Студент № " << i + 1 << ":" << endl;
-        p[i].prizv = ReadNonEmptyLine("  прізвище: ");
-        p[i].kurs = ReadIntInRange("  курс (1..6): ", 1, 6);
-
-        int specCode = ReadIntInRange(
-            "  спеціальність (0 - Комп'ютерні науки, 1 - Інформатика,\n"
-            "                 2 - Математика та економіка, 3 - Фізика та інформатика,\n"
-            "                 4 - Трудове навчання): ",
-            0, 4);
-        p[i].spec = static_cast<Specialnist>(specCode);
-
-        p[i].fizyka = ReadIntInRange("  оцінка з фізики (2..5): ", 2, 5);
-        p[i].matematyka = ReadIntInRange("  оцінка з математики (2..5): ", 2, 5);
-        p[i].informatyka = ReadIntInRange("  оцінка з інформатики (2..5): ", 2, 5);
+        cout << "Student #" << i + 1 << ":" << endl;
+        p[i].prizv = ReadLine("  prizvyshche: ");
+        p[i].kurs = ReadInt("  kurs (1..6): ", 1, 6);
+        int sc = ReadInt("  spec (0-KN, 1-INF, 2-ME, 3-FI, 4-TN): ", 0, 4);
+        p[i].spec = static_cast<Specialnist>(sc);
+        p[i].fizyka = ReadInt("  fizyka (2..5): ", 2, 5);
+        p[i].matematyka = ReadInt("  matematyka (2..5): ", 2, 5);
+        p[i].informatyka = ReadInt("  informatyka (2..5): ", 2, 5);
         cout << endl;
     }
 }
 
-// Виведення сформованого масиву студентів у вигляді 7-стовпцевої таблиці
-void Print(const Student* p, const int N)
-{
-    cout << "Список студентів (Рівень А):" << endl;
-    cout << "+----+----------------+------+-------------------------+--------+------------+-------------+" << endl;
-    cout << "| №  | Прізвище       | Курс | Спеціальність           | Фізика | Математика | Інформатика |" << endl;
-    cout << "+----+----------------+------+-------------------------+--------+------------+-------------+" << endl;
-
-    for (int i = 0; i < N; i++)
-    {
-        cout << "| " << setw(2) << right << i + 1 << " "
-             << "| " << PadLeft(p[i].prizv, 14) << " "
-             << "| " << setw(4) << right << p[i].kurs << " "
-             << "| " << PadLeft(SpecToStr(p[i].spec), 23) << " "
-             << "| " << setw(6) << right << p[i].fizyka << " "
-             << "| " << setw(10) << right << p[i].matematyka << " "
-             << "| " << setw(11) << right << p[i].informatyka << " |" << endl;
-    }
-
-    cout << "+----+----------------+------+-------------------------+--------+------------+-------------+" << endl;
-    cout << endl;
-}
-
-// Перевірка, чи навчається студент без трійок (на «відмінно» і «добре»)
-bool IsWithoutThrees(const Student& s)
-{
-    return s.fizyka >= 4 && s.matematyka >= 4 && s.informatyka >= 4;
-}
-
-// Виведення прізвищ студентів, які вчаться без трійок
-void PrintStudentsWithoutThrees(const Student* p, const int N)
-{
-    cout << "Прізвища студентів, які вчаться без трійок (на \"відмінно\" і \"добре\"):" << endl;
-    int k = 0;
-    for (int i = 0; i < N; i++)
-    {
-        if (IsWithoutThrees(p[i]))
-        {
-            k++;
-            cout << "  " << k << ". " << p[i].prizv << endl;
-        }
-    }
-    if (k == 0)
-        cout << "  (таких студентів немає)" << endl;
-}
-
-// Підрахунок кількості студентів, які отримали з фізики оцінку «5»
-int CountPhysicsFive(const Student* p, const int N)
-{
-    int count = 0;
-    for (int i = 0; i < N; i++)
-    {
-        if (p[i].fizyka == 5)
-            count++;
-    }
-    return count;
-}
-
-// Автоматична генерація масиву структур студентів із випадковими даними
 void AutoCreate(Student* p, const int N)
 {
     const char* surnames[] = {
-        "Іваненко", "Петренко", "Коваленко", "Мельник", "Шевченко",
-        "Бондар", "Ткаченко", "Кравченко", "Олійник", "Савченко",
-        "Гнатюк", "Бойко", "Яковенко", "Лисенко", "Павленко",
-        "Романенко", "Поліщук", "Марченко", "Дмитрук", "Сидоренко"
+        "Ivanenko", "Petrenko", "Kovalenko", "Melnyk", "Shevchenko",
+        "Bondar", "Tkachenko", "Kravchenko", "Oliinyk", "Savchenko",
+        "Hnatiuk", "Boiko", "Yakovenko", "Lysenko", "Pavlenko",
+        "Romanenko", "Polishchuk", "Marchenko", "Dmytruk", "Sydorenko"
     };
-    const int poolSize = static_cast<int>(sizeof(surnames) / sizeof(surnames[0]));
+    const int pool = static_cast<int>(sizeof(surnames) / sizeof(surnames[0]));
 
     int perm[20];
-    for (int i = 0; i < poolSize; i++)
+    for (int i = 0; i < pool; i++)
         perm[i] = i;
-    for (int i = poolSize - 1; i > 0; i--)
-    {
-        int j = rand() % (i + 1);
-        int tmp = perm[i];
-        perm[i] = perm[j];
-        perm[j] = tmp;
-    }
+    for (int i = pool - 1; i > 0; i--)
+        swap(perm[i], perm[rand() % (i + 1)]);
 
     for (int i = 0; i < N; i++)
     {
-        p[i].prizv = surnames[perm[i % poolSize]];
+        p[i].prizv = surnames[perm[i % pool]];
         p[i].kurs = 1 + rand() % 6;
         p[i].spec = static_cast<Specialnist>(rand() % 5);
         p[i].fizyka = 2 + rand() % 4;
@@ -220,27 +111,68 @@ void AutoCreate(Student* p, const int N)
     }
 }
 
+void Print(const Student* p, const int N)
+{
+    cout << "Spysok studentiv (Riven A):" << endl;
+    cout << "+----+--------------+------+---------------+--------+------------+-------------+" << endl;
+    cout << "| #  | Prizvyshche  | Kurs | Spetsialnist  | Fizyka | Matematyka | Informatyka |" << endl;
+    cout << "+----+--------------+------+---------------+--------+------------+-------------+" << endl;
+    for (int i = 0; i < N; i++)
+    {
+        cout << "| " << setw(2) << right << i + 1 << " "
+             << "| " << setw(12) << left << p[i].prizv << " "
+             << "| " << setw(4) << right << p[i].kurs << " "
+             << "| " << setw(13) << left << SpecToStr(p[i].spec) << " "
+             << "| " << setw(6) << right << p[i].fizyka << " "
+             << "| " << setw(10) << right << p[i].matematyka << " "
+             << "| " << setw(11) << right << p[i].informatyka << " |" << endl;
+    }
+    cout << "+----+--------------+------+---------------+--------+------------+-------------+" << endl << endl;
+}
+
+bool IsWithoutThrees(const Student& s)
+{
+    return s.fizyka >= 4 && s.matematyka >= 4 && s.informatyka >= 4;
+}
+
+void PrintStudentsWithoutThrees(const Student* p, const int N)
+{
+    cout << "Studenty bez triiok (na 4 i 5):" << endl;
+    int k = 0;
+    for (int i = 0; i < N; i++)
+        if (IsWithoutThrees(p[i]))
+            cout << "  " << ++k << ". " << p[i].prizv << endl;
+    if (k == 0)
+        cout << "  (nemaie)" << endl;
+}
+
+int CountPhysicsFive(const Student* p, const int N)
+{
+    int count = 0;
+    for (int i = 0; i < N; i++)
+        if (p[i].fizyka == 5)
+            count++;
+    return count;
+}
+
 int main()
 {
     srand(static_cast<unsigned>(time(nullptr)));
 
-    int N = ReadIntInRange("Введіть кількість студентів N (1..100): ", 1, 100);
-    int mode = ReadIntInRange("Спосіб заповнення (1 - автогенерація, 2 - з клавіатури): ", 1, 2);
+    int N = ReadInt("Vvedit kilkist studentiv N (1..100): ", 1, 100);
+    int mode = ReadInt("Sposib zapovnennia (1 - avtogeneratsiia, 2 - vruchnu): ", 1, 2);
     cout << endl;
 
     Student* p = new Student[N];
-
     if (mode == 1)
         AutoCreate(p, N);
     else
         Create(p, N);
 
     Print(p, N);
-
     PrintStudentsWithoutThrees(p, N);
-    int physFiveCount = CountPhysicsFive(p, N);
-    cout << "Кількість студентів, які отримали з фізики оцінку \"5\": "
-         << physFiveCount << endl;
+    cout << "Kilkist studentiv z otsinkoiu 5 z fizyky: "
+         << CountPhysicsFive(p, N) << endl;
 
     delete[] p;
     return 0;

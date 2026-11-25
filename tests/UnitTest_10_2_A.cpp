@@ -1,6 +1,6 @@
 // UnitTest_10_2_A.cpp
-// Рева Максим
-// Модульний тест для Lab_10_2_A.cpp
+// Reva Maksym
+// Unit test for Lab_10_2_A.cpp
 
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
@@ -11,62 +11,61 @@
 
 TEST_SUITE("UnitTest_10_2_A")
 {
-    TEST_CASE("CompareUkrStrings respects Ukrainian alphabet order")
+    TEST_CASE("CompareKeys orders by specialty name, average grade, and surname")
     {
-        CHECK(CompareUkrStrings("Інформатика", "Комп'ютерні науки") < 0);
-        CHECK(CompareUkrStrings("Комп'ютерні науки", "Математика та економіка") < 0);
-        CHECK(CompareUkrStrings("Трудове навчання", "Фізика та інформатика") < 0);
-        CHECK(CompareUkrStrings("Євтушенко", "Іваненко") < 0);
-        CHECK(CompareUkrStrings("Іваненко", "Іваненко") == 0);
+        // Fiz. ta inf. < Informatyka < Komp. nauky < Mat. ta ekon. < Trud. navch.
+        CHECK(CompareKeys(FI, 5.0, "Zubenko", INF, 2.0, "Avramenko") < 0);
+        CHECK(CompareKeys(INF, 5.0, "Zubenko", KN, 2.0, "Avramenko") < 0);
+        CHECK(CompareKeys(KN, 4.0, "Zubenko", KN, 4.33, "Avramenko") < 0);
+        CHECK(CompareKeys(KN, 4.33, "Avramenko", KN, 4.33, "Ivanenko") < 0);
+        CHECK(CompareKeys(KN, 4.33, "Ivanenko", KN, 13.0 / 3.0, "Ivanenko") == 0);
     }
 
-    TEST_CASE("IndexSort preserves original array and orders by specialty, avg, surname")
+    TEST_CASE("IndexSort preserves original array and orders correctly")
     {
         Student group[5] = {
-            {"Яковенко", 2, KN, 5, 5, 5},  // KN, avg 5.00
-            {"Петренко", 1, INF, 4, 4, 4}, // INF, avg 4.00
-            {"Авраменко", 3, KN, 4, 4, 5}, // KN, avg 4.33
-            {"Іваненко", 1, KN, 4, 5, 4},  // KN, avg 4.33
-            {"Бойко", 2, TN, 3, 4, 5}      // TN, avg 4.00
+            {"Yakovenko", 2, KN, 5, 5, 5},  // KN, avg 5.00
+            {"Petrenko", 1, INF, 4, 4, 4},  // INF, avg 4.00
+            {"Avramenko", 3, KN, 4, 4, 5},  // KN, avg 4.33
+            {"Ivanenko", 1, KN, 4, 5, 4},   // KN, avg 4.33
+            {"Boiko", 2, TN, 3, 4, 5}       // TN, avg 4.00
         };
 
         int* I = IndexSort(group, 5);
-        // Порядок: INF (Петренко), KN avg 4.33 (Авраменко, Іваненко), KN avg 5.00 (Яковенко), TN (Бойко)
-        CHECK(I[0] == 1);
-        CHECK(I[1] == 2);
-        CHECK(I[2] == 3);
-        CHECK(I[3] == 0);
-        CHECK(I[4] == 4);
+        CHECK(I[0] == 1); // INF: Petrenko
+        CHECK(I[1] == 2); // KN 4.33: Avramenko
+        CHECK(I[2] == 3); // KN 4.33: Ivanenko
+        CHECK(I[3] == 0); // KN 5.00: Yakovenko
+        CHECK(I[4] == 4); // TN: Boiko
 
-        // Перевіряємо, що початковий масив не змінився
-        CHECK(group[0].prizv == "Яковенко");
-        CHECK(group[1].prizv == "Петренко");
+        CHECK(group[0].prizv == "Yakovenko");
+        CHECK(group[1].prizv == "Petrenko");
         delete[] I;
     }
 
     TEST_CASE("Sort and BinSearch locate target student and reject absent keys")
     {
         Student group[5] = {
-            {"Яковенко", 2, KN, 5, 5, 5},
-            {"Петренко", 1, INF, 4, 4, 4},
-            {"Авраменко", 3, KN, 4, 4, 5},
-            {"Іваненко", 1, KN, 4, 5, 4},
-            {"Бойко", 2, TN, 3, 4, 5}
+            {"Yakovenko", 2, KN, 5, 5, 5},
+            {"Petrenko", 1, INF, 4, 4, 4},
+            {"Avramenko", 3, KN, 4, 4, 5},
+            {"Ivanenko", 1, KN, 4, 5, 4},
+            {"Boiko", 2, TN, 3, 4, 5}
         };
 
         Sort(group, 5);
 
-        CHECK(group[0].prizv == "Петренко");
-        CHECK(group[1].prizv == "Авраменко");
-        CHECK(group[2].prizv == "Іваненко");
-        CHECK(group[3].prizv == "Яковенко");
-        CHECK(group[4].prizv == "Бойко");
+        CHECK(group[0].prizv == "Petrenko");
+        CHECK(group[1].prizv == "Avramenko");
+        CHECK(group[2].prizv == "Ivanenko");
+        CHECK(group[3].prizv == "Yakovenko");
+        CHECK(group[4].prizv == "Boiko");
 
-        CHECK(BinSearch(group, 5, "Іваненко", KN, 4.33) == 2);
-        CHECK(BinSearch(group, 5, "Яковенко", KN, 5.00) == 3);
-        CHECK(BinSearch(group, 5, "Бойко", TN, 4.00) == 4);
-        CHECK(BinSearch(group, 5, "Невідомий", KN, 4.33) == -1);
-        CHECK(BinSearch(group, 5, "Іваненко", INF, 4.33) == -1);
+        CHECK(BinSearch(group, 5, "Ivanenko", KN, 4.33) == 2);
+        CHECK(BinSearch(group, 5, "Yakovenko", KN, 5.00) == 3);
+        CHECK(BinSearch(group, 5, "Boiko", TN, 4.00) == 4);
+        CHECK(BinSearch(group, 5, "Nevidomyi", KN, 4.33) == -1);
+        CHECK(BinSearch(group, 5, "Ivanenko", INF, 4.33) == -1);
     }
 
     TEST_CASE("AutoCreate generates valid students compatible with Sort and BinSearch")
