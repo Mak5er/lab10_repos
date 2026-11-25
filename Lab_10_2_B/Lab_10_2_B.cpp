@@ -44,12 +44,7 @@ string SpecToStr(Specialnist spec)
 
 int GetThirdGrade(const Student& s)
 {
-    switch (s.spec)
-    {
-    case KN:  return s.programuvannia;
-    case INF: return s.chyselni_metody;
-    default:  return s.pedahohika;
-    }
+    return s.programuvannia; // усі поля union (int) ділять ту саму область пам'яті
 }
 
 double AvgGrade(const Student& s)
