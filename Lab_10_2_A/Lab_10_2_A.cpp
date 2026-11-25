@@ -441,6 +441,48 @@ void AutoCreate(Student* p, const int N)
     }
 }
 
+// Автоматичне виконання всіх дій завдання (генерація, індексне/фізичне сортування, бінарний пошук)
+void RunAllAuto(Student* p, const int N, bool& isCreated, bool& isSorted)
+{
+    AutoCreate(p, N);
+    isCreated = true;
+    isSorted = false;
+
+    cout << "=== 1. Автоматично згенерований масив ===" << endl;
+    Print(p, N);
+
+    int* idx = IndexSort(p, N);
+    cout << "=== 2. Індексне впорядкування (основний масив без змін) ===" << endl;
+    PrintIndexSorted(p, idx, N);
+    delete[] idx;
+
+    Sort(p, N);
+    isSorted = true;
+    cout << "=== 3. Фізичне впорядкування масиву ===" << endl;
+    Print(p, N);
+
+    const Student& target = p[N / 2];
+    double targetAvg = round(AvgGrade(target) * 100.0) / 100.0;
+    int found = BinSearch(p, N, target.prizv, target.spec, targetAvg);
+    int notFound = BinSearch(p, N, "Невідомий", KN, 5.00);
+
+    cout << "=== 4. Бінарний пошук (автоматична перевірка) ===" << endl;
+    cout << fixed << setprecision(2);
+    cout << "  Пошук існуючого: " << SpecToStr(target.spec)
+         << ", сер. бал " << targetAvg << ", " << target.prizv << endl;
+    if (found != -1)
+        cout << "  -> Знайдено студента в позиції " << found + 1 << "." << endl;
+    else
+        cout << "  -> Не знайдено." << endl;
+
+    cout << "  Пошук відсутнього: " << SpecToStr(KN)
+         << ", сер. бал 5.00, Невідомий" << endl;
+    if (notFound == -1)
+        cout << "  -> Шуканого студента не знайдено." << endl;
+    else
+        cout << "  -> Знайдено в позиції " << notFound + 1 << "." << endl;
+}
+
 int main()
 {
     srand(static_cast<unsigned>(time(nullptr)));
@@ -455,11 +497,11 @@ int main()
     {
         cout << endl;
         cout << "Виберіть дію:" << endl;
-        cout << "  [1] - автогенерація даних" << endl;
+        cout << "  [1] - виконати всі дії автоматично (генерація + сортування + пошук)" << endl;
         cout << "  [2] - введення даних з клавіатури" << endl;
         cout << "  [3] - фізичне впорядкування даних" << endl;
         cout << "  [4] - індексне впорядкування та вивід даних" << endl;
-        cout << "  [5] - бінарний пошук студента" << endl;
+        cout << "  [5] - бінарний пошук студента (вручну)" << endl;
         cout << "  [0] - вихід та завершення роботи програми" << endl;
 
         menuItem = ReadIntInRange("Введіть значення: ", 0, 5);
@@ -468,11 +510,7 @@ int main()
         switch (menuItem)
         {
         case 1:
-            AutoCreate(p, N);
-            isCreated = true;
-            isSorted = false;
-            cout << "Дані студентів автоматично згенеровано." << endl << endl;
-            Print(p, N);
+            RunAllAuto(p, N, isCreated, isSorted);
             break;
         case 2:
             Create(p, N);
