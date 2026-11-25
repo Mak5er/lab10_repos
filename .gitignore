@@ -5,6 +5,8 @@ Lab_10_2_A/Lab_10_2_A
 Lab_10_2_B/Lab_10_2_B
 Lab_10_3/Lab_10_3
 tests/UnitTest_*
+!tests/*.cpp
+!tests/*.h
 *.out
 *.dSYM/
 
