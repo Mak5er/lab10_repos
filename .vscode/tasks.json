@@ -1,0 +1,52 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build Tests",
+            "type": "shell",
+            "command": "make tests",
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            },
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "Build Labs",
+            "type": "shell",
+            "command": "make labs",
+            "group": "build",
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "Run Tests",
+            "type": "shell",
+            "command": "make test",
+            "dependsOn": [
+                "Build Tests"
+            ],
+            "group": "test",
+            "problemMatcher": []
+        },
+        {
+            "type": "shell",
+            "label": "C/C++: clang++ build active file",
+            "command": "if [[ \"${fileDirname}\" == */tests ]]; then make -C \"${workspaceFolder}\" \"tests/${fileBasenameNoExtension}\"; else /usr/bin/clang++ -std=c++17 -Wall -Wextra -g \"${file}\" -o \"${fileDirname}/${fileBasenameNoExtension}\"; fi",
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "Builds active Lab_10 source file or unit test target."
+        }
+    ]
+}

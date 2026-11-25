@@ -1,0 +1,14 @@
+# Compiled binaries
+Lab_10_1_A/Lab_10_1_A
+Lab_10_1_B/Lab_10_1_B
+Lab_10_2_A/Lab_10_2_A
+Lab_10_2_B/Lab_10_2_B
+Lab_10_3/Lab_10_3
+tests/UnitTest_*
+*.out
+*.dSYM/
+
+# Data / temporary files
+*.dat
+*.bin
+.DS_Store

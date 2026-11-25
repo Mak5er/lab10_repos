@@ -1,0 +1,70 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Run Lab_10_1_A",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/Lab_10_1_A/Lab_10_1_A",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/Lab_10_1_A",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "lldb",
+            "preLaunchTask": "Build Labs"
+        },
+        {
+            "name": "Run Lab_10_1_B",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/Lab_10_1_B/Lab_10_1_B",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/Lab_10_1_B",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "lldb",
+            "preLaunchTask": "Build Labs"
+        },
+        {
+            "name": "Run Lab_10_2_A",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/Lab_10_2_A/Lab_10_2_A",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/Lab_10_2_A",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "lldb",
+            "preLaunchTask": "Build Labs"
+        },
+        {
+            "name": "Run Lab_10_2_B",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/Lab_10_2_B/Lab_10_2_B",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/Lab_10_2_B",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "lldb",
+            "preLaunchTask": "Build Labs"
+        },
+        {
+            "name": "Run Lab_10_3",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/Lab_10_3/Lab_10_3",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/Lab_10_3",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "lldb",
+            "preLaunchTask": "Build Labs"
+        }
+    ]
+}

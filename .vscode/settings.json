@@ -1,0 +1,15 @@
+{
+  "testMate.cpp.test.advancedExecutables": [
+    {
+      "pattern": "tests/UnitTest_*",
+      "cwd": "${workspaceFolder}",
+      "runTask": {
+        "before": ["Build Tests"]
+      }
+    }
+  ],
+  "testMate.cpp.test.parallelizationLimit": 1,
+  "code-runner.executorMap": {
+    "cpp": "cd \"$workspaceRoot\" && if [[ \"$dir\" == */tests* ]]; then make \"tests/$fileNameWithoutExt\" && \"./tests/$fileNameWithoutExt\"; else cd \"$dir\" && clang++ -std=c++17 -Wall -Wextra \"$fileName\" -o \"$fileNameWithoutExt\" && \"./$fileNameWithoutExt\"; fi"
+  }
+}
