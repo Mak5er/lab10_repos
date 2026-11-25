@@ -68,4 +68,23 @@ TEST_SUITE("UnitTest_10_2_A")
         CHECK(BinSearch(group, 5, "Невідомий", KN, 4.33) == -1);
         CHECK(BinSearch(group, 5, "Іваненко", INF, 4.33) == -1);
     }
+
+    TEST_CASE("AutoCreate generates valid students compatible with Sort and BinSearch")
+    {
+        srand(77);
+        const int N = 6;
+        Student group[N];
+        AutoCreate(group, N);
+        for (int i = 0; i < N; i++)
+        {
+            CHECK(!group[i].prizv.empty());
+            CHECK(group[i].kurs >= 1);
+            CHECK(group[i].kurs <= 6);
+            CHECK(group[i].fizyka >= 2);
+            CHECK(group[i].fizyka <= 5);
+        }
+        Sort(group, N);
+        double targetAvg = AvgGrade(group[0]);
+        CHECK(BinSearch(group, N, group[0].prizv, group[0].spec, targetAvg) != -1);
+    }
 }

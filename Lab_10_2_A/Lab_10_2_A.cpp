@@ -5,6 +5,8 @@
 // Варіант 23
 
 #include <cmath>
+#include <cstdlib>
+#include <ctime>
 #include <iostream>
 #include <iomanip>
 #include <limits>
@@ -406,8 +408,43 @@ int BinSearch(const Student* p, const int N, const string& prizv, Specialnist sp
     return -1;
 }
 
+// Автоматична генерація масиву структур студентів із випадковими даними
+void AutoCreate(Student* p, const int N)
+{
+    const char* surnames[] = {
+        "Іваненко", "Петренко", "Коваленко", "Мельник", "Шевченко",
+        "Бондар", "Ткаченко", "Кравченко", "Олійник", "Савченко",
+        "Гнатюк", "Бойко", "Яковенко", "Лисенко", "Павленко",
+        "Романенко", "Поліщук", "Марченко", "Дмитрук", "Сидоренко"
+    };
+    const int poolSize = static_cast<int>(sizeof(surnames) / sizeof(surnames[0]));
+
+    int perm[20];
+    for (int i = 0; i < poolSize; i++)
+        perm[i] = i;
+    for (int i = poolSize - 1; i > 0; i--)
+    {
+        int j = rand() % (i + 1);
+        int tmp = perm[i];
+        perm[i] = perm[j];
+        perm[j] = tmp;
+    }
+
+    for (int i = 0; i < N; i++)
+    {
+        p[i].prizv = surnames[perm[i % poolSize]];
+        p[i].kurs = 1 + rand() % 6;
+        p[i].spec = static_cast<Specialnist>(rand() % 5);
+        p[i].fizyka = 2 + rand() % 4;
+        p[i].matematyka = 2 + rand() % 4;
+        p[i].informatyka = 2 + rand() % 4;
+    }
+}
+
 int main()
 {
+    srand(static_cast<unsigned>(time(nullptr)));
+
     int N = ReadIntInRange("Введіть кількість студентів N (1..100): ", 1, 100);
     Student* p = new Student[N];
     bool isCreated = false;
@@ -418,8 +455,8 @@ int main()
     {
         cout << endl;
         cout << "Виберіть дію:" << endl;
-        cout << "  [1] - введення даних з клавіатури" << endl;
-        cout << "  [2] - вивід даних на екран" << endl;
+        cout << "  [1] - автогенерація даних" << endl;
+        cout << "  [2] - введення даних з клавіатури" << endl;
         cout << "  [3] - фізичне впорядкування даних" << endl;
         cout << "  [4] - індексне впорядкування та вивід даних" << endl;
         cout << "  [5] - бінарний пошук студента" << endl;
@@ -431,33 +468,34 @@ int main()
         switch (menuItem)
         {
         case 1:
+            AutoCreate(p, N);
+            isCreated = true;
+            isSorted = false;
+            cout << "Дані студентів автоматично згенеровано." << endl << endl;
+            Print(p, N);
+            break;
+        case 2:
             Create(p, N);
             isCreated = true;
             isSorted = false;
-            break;
-        case 2:
-            if (!isCreated)
-            {
-                cout << "Спочатку введіть дані студентів (пункт [1])." << endl;
-                break;
-            }
             Print(p, N);
             break;
         case 3:
             if (!isCreated)
             {
-                cout << "Спочатку введіть дані студентів (пункт [1])." << endl;
+                cout << "Спочатку сформуйте дані студентів (пункт [1] або [2])." << endl;
                 break;
             }
             Sort(p, N);
             isSorted = true;
-            cout << "Масив фізично впорядковано." << endl;
+            cout << "Масив фізично впорядковано." << endl << endl;
+            Print(p, N);
             break;
         case 4:
         {
             if (!isCreated)
             {
-                cout << "Спочатку введіть дані студентів (пункт [1])." << endl;
+                cout << "Спочатку сформуйте дані студентів (пункт [1] або [2])." << endl;
                 break;
             }
             int* idx = IndexSort(p, N);
@@ -469,7 +507,7 @@ int main()
         {
             if (!isCreated)
             {
-                cout << "Спочатку введіть дані студентів (пункт [1])." << endl;
+                cout << "Спочатку сформуйте дані студентів (пункт [1] або [2])." << endl;
                 break;
             }
             if (!isSorted)

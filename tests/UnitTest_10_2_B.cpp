@@ -43,4 +43,21 @@ TEST_SUITE("UnitTest_10_2_B")
         CHECK(BinSearch(group, 4, "Шевченко", FI, 4.67) == 3);
         CHECK(BinSearch(group, 4, "Шевченко", KN, 4.67) == -1);
     }
+
+    TEST_CASE("AutoCreate generates valid union students compatible with Sort and BinSearch")
+    {
+        srand(77);
+        const int N = 6;
+        Student group[N];
+        AutoCreate(group, N);
+        for (int i = 0; i < N; i++)
+        {
+            CHECK(!group[i].prizv.empty());
+            CHECK(GetThirdGrade(group[i]) >= 2);
+            CHECK(GetThirdGrade(group[i]) <= 5);
+        }
+        Sort(group, N);
+        double targetAvg = AvgGrade(group[0]);
+        CHECK(BinSearch(group, N, group[0].prizv, group[0].spec, targetAvg) != -1);
+    }
 }

@@ -4,6 +4,8 @@
 // Послідовний пошук в масиві структур (без об'єднань)
 // Варіант 23
 
+#include <cstdlib>
+#include <ctime>
 #include <iostream>
 #include <iomanip>
 #include <limits>
@@ -185,14 +187,54 @@ int CountPhysicsFive(const Student* p, const int N)
     return count;
 }
 
+// Автоматична генерація масиву структур студентів із випадковими даними
+void AutoCreate(Student* p, const int N)
+{
+    const char* surnames[] = {
+        "Іваненко", "Петренко", "Коваленко", "Мельник", "Шевченко",
+        "Бондар", "Ткаченко", "Кравченко", "Олійник", "Савченко",
+        "Гнатюк", "Бойко", "Яковенко", "Лисенко", "Павленко",
+        "Романенко", "Поліщук", "Марченко", "Дмитрук", "Сидоренко"
+    };
+    const int poolSize = static_cast<int>(sizeof(surnames) / sizeof(surnames[0]));
+
+    int perm[20];
+    for (int i = 0; i < poolSize; i++)
+        perm[i] = i;
+    for (int i = poolSize - 1; i > 0; i--)
+    {
+        int j = rand() % (i + 1);
+        int tmp = perm[i];
+        perm[i] = perm[j];
+        perm[j] = tmp;
+    }
+
+    for (int i = 0; i < N; i++)
+    {
+        p[i].prizv = surnames[perm[i % poolSize]];
+        p[i].kurs = 1 + rand() % 6;
+        p[i].spec = static_cast<Specialnist>(rand() % 5);
+        p[i].fizyka = 2 + rand() % 4;
+        p[i].matematyka = 2 + rand() % 4;
+        p[i].informatyka = 2 + rand() % 4;
+    }
+}
+
 int main()
 {
+    srand(static_cast<unsigned>(time(nullptr)));
+
     int N = ReadIntInRange("Введіть кількість студентів N (1..100): ", 1, 100);
+    int mode = ReadIntInRange("Спосіб заповнення (1 - автогенерація, 2 - з клавіатури): ", 1, 2);
     cout << endl;
 
     Student* p = new Student[N];
 
-    Create(p, N);
+    if (mode == 1)
+        AutoCreate(p, N);
+    else
+        Create(p, N);
+
     Print(p, N);
 
     PrintStudentsWithoutThrees(p, N);

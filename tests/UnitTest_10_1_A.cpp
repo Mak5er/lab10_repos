@@ -40,4 +40,26 @@ TEST_SUITE("UnitTest_10_1_A")
         };
         CHECK(CountPhysicsFive(none, 2) == 0);
     }
+
+    TEST_CASE("AutoCreate generates valid students within bounds")
+    {
+        srand(42);
+        const int N = 8;
+        Student group[N];
+        AutoCreate(group, N);
+        for (int i = 0; i < N; i++)
+        {
+            CHECK(!group[i].prizv.empty());
+            CHECK(group[i].kurs >= 1);
+            CHECK(group[i].kurs <= 6);
+            CHECK(group[i].spec >= KN);
+            CHECK(group[i].spec <= TN);
+            CHECK(group[i].fizyka >= 2);
+            CHECK(group[i].fizyka <= 5);
+            CHECK(group[i].matematyka >= 2);
+            CHECK(group[i].matematyka <= 5);
+            CHECK(group[i].informatyka >= 2);
+            CHECK(group[i].informatyka <= 5);
+        }
+    }
 }
