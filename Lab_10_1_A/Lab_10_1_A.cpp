@@ -2,11 +2,11 @@
 // Reva Maksym, RI-13, Variant 23
 // Lab 10.1 (Level A): Sequential search in array of structures
 
+#include <cerrno>
 #include <cstdlib>
 #include <ctime>
 #include <iomanip>
 #include <iostream>
-#include <limits>
 #include <string>
 
 using namespace std;
@@ -38,18 +38,28 @@ string SpecToStr(Specialnist spec)
 
 int ReadInt(const string& prompt, int minVal, int maxVal)
 {
-    int val = 0;
+    string s;
     while (true)
     {
         cout << prompt;
-        if (cin >> val && val >= minVal && val <= maxVal)
+        if (!getline(cin, s))
+            return minVal;
+
+        const char* start = s.c_str();
+        while (*start == ' ' || *start == '\t' || *start == '\r')
+            start++;
+
+        if (*start != '\0')
         {
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            return val;
+            char* end = nullptr;
+            errno = 0;
+            long val = strtol(start, &end, 10);
+            while (end && (*end == ' ' || *end == '\t' || *end == '\r'))
+                end++;
+            if (errno == 0 && end && *end == '\0' && val >= minVal && val <= maxVal)
+                return static_cast<int>(val);
         }
         cout << "Error! Enter integer [" << minVal << ".." << maxVal << "]." << endl;
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
     }
 }
 
@@ -59,11 +69,14 @@ string ReadLine(const string& prompt)
     while (true)
     {
         cout << prompt;
-        getline(cin, s);
-        if (!s.empty() && s.back() == '\r')
-            s.pop_back();
-        if (!s.empty())
-            return s;
+        if (!getline(cin, s))
+            return "";
+        size_t first = s.find_first_not_of(" \t\r");
+        if (first != string::npos)
+        {
+            size_t last = s.find_last_not_of(" \t\r");
+            return s.substr(first, last - first + 1);
+        }
         cout << "Error! String cannot be empty." << endl;
     }
 }

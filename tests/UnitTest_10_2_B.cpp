@@ -1,21 +1,23 @@
 // UnitTest_10_2_B.cpp
 // Reva Maksym
-// Unit test for Lab_10_2_B.cpp (union)
+// Multi-module unit test for Lab_10_2_B (union + sort_search modules)
 
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
 
-#define main lab_10_2_b_main
-#include "../Lab_10_2_B/Lab_10_2_B.cpp"
-#undef main
+#include "../Lab_10_2_B/student.h"
+#include "../Lab_10_2_B/sort_search.h"
 
 TEST_SUITE("UnitTest_10_2_B")
 {
-    TEST_CASE("AvgGrade uses union field according to specialty")
+    TEST_CASE("AvgGrade reads shared union memory regardless of specialty")
     {
         Student s1{"Ivanenko", 1, KN, 5, 4, {5}};
-        Student s2{"Petrenko", 2, INF, 4, 4, {5}};
-        Student s3{"Boiko", 3, ME, 3, 4, {5}};
+        Student s2{"Petrenko", 2, INF, 4, 4, {0}};
+        Student s3{"Boiko", 3, ME, 3, 4, {0}};
+
+        s2.chyselni_metody = 5;
+        s3.pedahohika = 5;
 
         CHECK(AvgGrade(s1) == doctest::Approx(14.0 / 3.0));
         CHECK(AvgGrade(s2) == doctest::Approx(13.0 / 3.0));
@@ -40,6 +42,7 @@ TEST_SUITE("UnitTest_10_2_B")
 
         Sort(group, 4);
         CHECK(BinSearch(group, 4, "Ivanchuk", KN, 4.67) == 3);
+        CHECK(BinSearch(group, 4, "Ivanchuk", KN, 4.7) == 3);
         CHECK(BinSearch(group, 4, "Shevchenko", FI, 4.67) == 0);
         CHECK(BinSearch(group, 4, "Shevchenko", KN, 4.67) == -1);
     }
@@ -53,8 +56,8 @@ TEST_SUITE("UnitTest_10_2_B")
         for (int i = 0; i < N; i++)
         {
             CHECK(!group[i].prizv.empty());
-            CHECK(GetThirdGrade(group[i]) >= 2);
-            CHECK(GetThirdGrade(group[i]) <= 5);
+            CHECK(group[i].programuvannia >= 2);
+            CHECK(group[i].programuvannia <= 5);
         }
         Sort(group, N);
         double targetAvg = AvgGrade(group[0]);

@@ -1,6 +1,6 @@
 // UnitTest_10_1_B.cpp
 // Reva Maksym
-// Unit test for Lab_10_1_B.cpp (union)
+// Unit test for Lab_10_1_B.cpp (shared union memory)
 
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
@@ -11,19 +11,23 @@
 
 TEST_SUITE("UnitTest_10_1_B")
 {
-    TEST_CASE("GetThirdGrade and IsWithoutThrees work across all specialties and union fields")
+    TEST_CASE("Union fields share memory and IsWithoutThrees works across all specialties")
     {
         Student kn{"Ivanenko", 1, KN, 5, 4, {5}};
-        Student inf{"Petrenko", 2, INF, 4, 4, {4}};
-        Student me{"Kovalenko", 3, ME, 5, 5, {3}};
-        Student fi{"Melnyk", 2, FI, 4, 5, {5}};
-        Student tn{"Tkach", 1, TN, 4, 4, {2}};
+        Student inf{"Petrenko", 2, INF, 4, 4, {0}};
+        Student me{"Kovalenko", 3, ME, 5, 5, {0}};
+        Student fi{"Melnyk", 2, FI, 4, 5, {0}};
+        Student tn{"Tkach", 1, TN, 4, 4, {0}};
 
-        CHECK(GetThirdGrade(kn) == 5);
-        CHECK(GetThirdGrade(inf) == 4);
-        CHECK(GetThirdGrade(me) == 3);
-        CHECK(GetThirdGrade(fi) == 5);
-        CHECK(GetThirdGrade(tn) == 2);
+        inf.chyselni_metody = 4;
+        me.pedahohika = 3;
+        fi.pedahohika = 5;
+        tn.pedahohika = 2;
+
+        CHECK(inf.programuvannia == 4);
+        CHECK(me.programuvannia == 3);
+        CHECK(fi.programuvannia == 5);
+        CHECK(tn.programuvannia == 2);
 
         CHECK(IsWithoutThrees(kn) == true);
         CHECK(IsWithoutThrees(inf) == true);
@@ -59,9 +63,8 @@ TEST_SUITE("UnitTest_10_1_B")
             CHECK(group[i].fizyka <= 5);
             CHECK(group[i].matematyka >= 2);
             CHECK(group[i].matematyka <= 5);
-            int g3 = GetThirdGrade(group[i]);
-            CHECK(g3 >= 2);
-            CHECK(g3 <= 5);
+            CHECK(group[i].programuvannia >= 2);
+            CHECK(group[i].programuvannia <= 5);
         }
     }
 }

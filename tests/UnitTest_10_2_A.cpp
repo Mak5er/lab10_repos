@@ -1,13 +1,12 @@
 // UnitTest_10_2_A.cpp
 // Reva Maksym
-// Unit test for Lab_10_2_A.cpp
+// Multi-module unit test for Lab_10_2_A (student & sort_search modules)
 
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
 
-#define main lab_10_2_a_main
-#include "../Lab_10_2_A/Lab_10_2_A.cpp"
-#undef main
+#include "../Lab_10_2_A/student.h"
+#include "../Lab_10_2_A/sort_search.h"
 
 TEST_SUITE("UnitTest_10_2_A")
 {
@@ -19,6 +18,12 @@ TEST_SUITE("UnitTest_10_2_A")
         CHECK(CompareKeys(KN, 4.0, "Zubenko", KN, 4.33, "Avramenko") < 0);
         CHECK(CompareKeys(KN, 4.33, "Avramenko", KN, 4.33, "Ivanenko") < 0);
         CHECK(CompareKeys(KN, 4.33, "Ivanenko", KN, 13.0 / 3.0, "Ivanenko") == 0);
+
+        // Rounding tolerance eps = 0.05 accepts 4.66, 4.67, and 4.7 for 14/3, rejects 4.5
+        CHECK(CompareKeys(KN, 14.0 / 3.0, "Ivanenko", KN, 4.66, "Ivanenko") == 0);
+        CHECK(CompareKeys(KN, 14.0 / 3.0, "Ivanenko", KN, 4.67, "Ivanenko") == 0);
+        CHECK(CompareKeys(KN, 14.0 / 3.0, "Ivanenko", KN, 4.7, "Ivanenko") == 0);
+        CHECK(CompareKeys(KN, 14.0 / 3.0, "Ivanenko", KN, 4.5, "Ivanenko") != 0);
     }
 
     TEST_CASE("IndexSort preserves original array and orders correctly")

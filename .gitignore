@@ -8,6 +8,7 @@ tests/UnitTest_*
 !tests/*.cpp
 !tests/*.h
 *.out
+*.o
 *.dSYM/
 
 # Data / temporary files

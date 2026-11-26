@@ -2,23 +2,16 @@
 // Reva Maksym, RI-13, Variant 23
 // Lab 10.1 (Level B): Sequential search in array of structures with union
 
+#include <cerrno>
 #include <cstdlib>
 #include <ctime>
 #include <iomanip>
 #include <iostream>
-#include <limits>
 #include <string>
 
 using namespace std;
 
-enum Specialnist
-{
-    KN,
-    INF,
-    ME,
-    FI,
-    TN
-};
+enum Specialnist { KN, INF, ME, FI, TN };
 
 struct Student
 {
@@ -39,59 +32,61 @@ string SpecToStr(Specialnist spec)
 {
     switch (spec)
     {
-    case KN:
-        return "Komp. nauky";
-    case INF:
-        return "Informatyka";
-    case ME:
-        return "Mat. ta ekon.";
-    case FI:
-        return "Fiz. ta inf.";
-    case TN:
-        return "Trud. navch.";
-    default:
-        return "Unknown";
+    case KN:  return "Komp. nauky";
+    case INF: return "Informatyka";
+    case ME:  return "Mat. ta ekon.";
+    case FI:  return "Fiz. ta inf.";
+    case TN:  return "Trud. navch.";
+    default:  return "Unknown";
     }
 }
 
-int GetThirdGrade(const Student &s)
-{
-    return s.programuvannia; // усі поля union (int) ділять ту саму область пам'яті
-}
-
-int ReadInt(const string &prompt, int minVal, int maxVal)
-{
-    int val = 0;
-    while (true)
-    {
-        cout << prompt;
-        if (cin >> val && val >= minVal && val <= maxVal)
-        {
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            return val;
-        }
-        cout << "Error! Enter integer [" << minVal << ".." << maxVal << "]." << endl;
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    }
-}
-
-string ReadLine(const string &prompt)
+int ReadInt(const string& prompt, int minVal, int maxVal)
 {
     string s;
     while (true)
     {
         cout << prompt;
-        getline(cin, s);
-        if (!s.empty() && s.back() == '\r')
-            s.pop_back();
-        if (!s.empty())
-            return s;
+        if (!getline(cin, s))
+            return minVal;
+
+        const char* start = s.c_str();
+        while (*start == ' ' || *start == '\t' || *start == '\r')
+            start++;
+
+        if (*start != '\0')
+        {
+            char* end = nullptr;
+            errno = 0;
+            long val = strtol(start, &end, 10);
+            while (end && (*end == ' ' || *end == '\t' || *end == '\r'))
+                end++;
+            if (errno == 0 && end && *end == '\0' && val >= minVal && val <= maxVal)
+                return static_cast<int>(val);
+        }
+        cout << "Error! Enter integer [" << minVal << ".." << maxVal << "]." << endl;
+    }
+}
+
+string ReadLine(const string& prompt)
+{
+    string s;
+    while (true)
+    {
+        cout << prompt;
+        if (!getline(cin, s))
+            return "";
+        size_t first = s.find_first_not_of(" \t\r");
+        if (first != string::npos)
+        {
+            size_t last = s.find_last_not_of(" \t\r");
+            return s.substr(first, last - first + 1);
+        }
         cout << "Error! String cannot be empty." << endl;
     }
 }
 
-void Create(Student *p, const int N)
+void Create(Student* p, const int N)
 {
     for (int i = 0; i < N; i++)
     {
@@ -105,27 +100,22 @@ void Create(Student *p, const int N)
 
         switch (p[i].spec)
         {
-        case KN:
-            p[i].programuvannia = ReadInt("  programuvannia (2..5): ", 2, 5);
-            break;
-        case INF:
-            p[i].chyselni_metody = ReadInt("  chyselni metody (2..5): ", 2, 5);
-            break;
-        default:
-            p[i].pedahohika = ReadInt("  pedahohika (2..5): ", 2, 5);
-            break;
+        case KN:  p[i].programuvannia = ReadInt("  programuvannia (2..5): ", 2, 5); break;
+        case INF: p[i].chyselni_metody = ReadInt("  chyselni metody (2..5): ", 2, 5); break;
+        default:  p[i].pedahohika = ReadInt("  pedahohika (2..5): ", 2, 5); break;
         }
         cout << endl;
     }
 }
 
-void AutoCreate(Student *p, const int N)
+void AutoCreate(Student* p, const int N)
 {
-    const char *surnames[] = {
+    const char* surnames[] = {
         "Ivanenko", "Petrenko", "Kovalenko", "Melnyk", "Shevchenko",
         "Bondar", "Tkachenko", "Kravchenko", "Oliinyk", "Savchenko",
         "Hnatiuk", "Boiko", "Yakovenko", "Lysenko", "Pavlenko",
-        "Romanenko", "Polishchuk", "Marchenko", "Dmytruk", "Sydorenko"};
+        "Romanenko", "Polishchuk", "Marchenko", "Dmytruk", "Sydorenko"
+    };
     const int pool = static_cast<int>(sizeof(surnames) / sizeof(surnames[0]));
 
     int perm[20];
@@ -141,23 +131,12 @@ void AutoCreate(Student *p, const int N)
         p[i].spec = static_cast<Specialnist>(rand() % 5);
         p[i].fizyka = 2 + rand() % 4;
         p[i].matematyka = 2 + rand() % 4;
-        int g3 = 2 + rand() % 4;
-        switch (p[i].spec)
-        {
-        case KN:
-            p[i].programuvannia = g3;
-            break;
-        case INF:
-            p[i].chyselni_metody = g3;
-            break;
-        default:
-            p[i].pedahohika = g3;
-            break;
-        }
+        // Усі int-поля union займають ту саму область пам'яті, тому записуємо напряму
+        p[i].programuvannia = 2 + rand() % 4;
     }
 }
 
-void Print(const Student *p, const int N)
+void Print(const Student* p, const int N)
 {
     cout << "Spysok studentiv (Riven B):" << endl;
     cout << "+----+--------------+------+---------------+--------+------------+---------------+-------------+------------+" << endl;
@@ -191,16 +170,15 @@ void Print(const Student *p, const int N)
             break;
         }
     }
-    cout << "+----+--------------+------+---------------+--------+------------+---------------+-------------+------------+" << endl
-         << endl;
+    cout << "+----+--------------+------+---------------+--------+------------+---------------+-------------+------------+" << endl << endl;
 }
 
-bool IsWithoutThrees(const Student &s)
+bool IsWithoutThrees(const Student& s)
 {
-    return s.fizyka >= 4 && s.matematyka >= 4 && GetThirdGrade(s) >= 4;
+    return s.fizyka >= 4 && s.matematyka >= 4 && s.programuvannia >= 4;
 }
 
-void PrintStudentsWithoutThrees(const Student *p, const int N)
+void PrintStudentsWithoutThrees(const Student* p, const int N)
 {
     cout << "Studenty bez triiok (na 4 i 5):" << endl;
     int k = 0;
@@ -211,7 +189,7 @@ void PrintStudentsWithoutThrees(const Student *p, const int N)
         cout << "  (nemaie)" << endl;
 }
 
-int CountPhysicsFive(const Student *p, const int N)
+int CountPhysicsFive(const Student* p, const int N)
 {
     int count = 0;
     for (int i = 0; i < N; i++)
@@ -228,7 +206,7 @@ int main()
     int mode = ReadInt("Sposib zapovnennia (1 - avtogeneratsiia, 2 - vruchnu): ", 1, 2);
     cout << endl;
 
-    Student *p = new Student[N];
+    Student* p = new Student[N];
     if (mode == 1)
         AutoCreate(p, N);
     else

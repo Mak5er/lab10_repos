@@ -18,11 +18,11 @@ Lab_10_1_A/Lab_10_1_A: Lab_10_1_A/Lab_10_1_A.cpp
 Lab_10_1_B/Lab_10_1_B: Lab_10_1_B/Lab_10_1_B.cpp
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-Lab_10_2_A/Lab_10_2_A: Lab_10_2_A/Lab_10_2_A.cpp
-	$(CXX) $(CXXFLAGS) $< -o $@
+Lab_10_2_A/Lab_10_2_A: Lab_10_2_A/Lab_10_2_A.cpp Lab_10_2_A/student.cpp Lab_10_2_A/sort_search.cpp Lab_10_2_A/student.h Lab_10_2_A/sort_search.h
+	$(CXX) $(CXXFLAGS) Lab_10_2_A/Lab_10_2_A.cpp Lab_10_2_A/student.cpp Lab_10_2_A/sort_search.cpp -o $@
 
-Lab_10_2_B/Lab_10_2_B: Lab_10_2_B/Lab_10_2_B.cpp
-	$(CXX) $(CXXFLAGS) $< -o $@
+Lab_10_2_B/Lab_10_2_B: Lab_10_2_B/Lab_10_2_B.cpp Lab_10_2_B/student.cpp Lab_10_2_B/sort_search.cpp Lab_10_2_B/student.h Lab_10_2_B/sort_search.h
+	$(CXX) $(CXXFLAGS) Lab_10_2_B/Lab_10_2_B.cpp Lab_10_2_B/student.cpp Lab_10_2_B/sort_search.cpp -o $@
 
 tests/UnitTest_10_1_A: tests/UnitTest_10_1_A.cpp Lab_10_1_A/Lab_10_1_A.cpp
 	$(CXX) $(CXXFLAGS) $< -o $@
@@ -30,11 +30,11 @@ tests/UnitTest_10_1_A: tests/UnitTest_10_1_A.cpp Lab_10_1_A/Lab_10_1_A.cpp
 tests/UnitTest_10_1_B: tests/UnitTest_10_1_B.cpp Lab_10_1_B/Lab_10_1_B.cpp
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-tests/UnitTest_10_2_A: tests/UnitTest_10_2_A.cpp Lab_10_2_A/Lab_10_2_A.cpp
-	$(CXX) $(CXXFLAGS) $< -o $@
+tests/UnitTest_10_2_A: tests/UnitTest_10_2_A.cpp Lab_10_2_A/student.cpp Lab_10_2_A/sort_search.cpp Lab_10_2_A/student.h Lab_10_2_A/sort_search.h
+	$(CXX) $(CXXFLAGS) tests/UnitTest_10_2_A.cpp Lab_10_2_A/student.cpp Lab_10_2_A/sort_search.cpp -o $@
 
-tests/UnitTest_10_2_B: tests/UnitTest_10_2_B.cpp Lab_10_2_B/Lab_10_2_B.cpp
-	$(CXX) $(CXXFLAGS) $< -o $@
+tests/UnitTest_10_2_B: tests/UnitTest_10_2_B.cpp Lab_10_2_B/student.cpp Lab_10_2_B/sort_search.cpp Lab_10_2_B/student.h Lab_10_2_B/sort_search.h
+	$(CXX) $(CXXFLAGS) tests/UnitTest_10_2_B.cpp Lab_10_2_B/student.cpp Lab_10_2_B/sort_search.cpp -o $@
 
 test: tests
 	@for t in $(TEST_BINS); do \
@@ -43,4 +43,4 @@ test: tests
 	done
 
 clean:
-	rm -f $(LAB_BINS) $(TEST_BINS) *.dat *.bin
+	rm -f $(LAB_BINS) $(TEST_BINS) *.o */*.o *.dat *.bin

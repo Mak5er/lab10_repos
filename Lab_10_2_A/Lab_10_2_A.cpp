@@ -1,245 +1,18 @@
 // Lab_10_2_A.cpp
 // Reva Maksym, RI-13, Variant 23
-// Lab 10.2 (Level A): Physical sort, index sort, and binary search
+// Main module (Level A): menu orchestration and automated demo scenario
 
 #include <cmath>
 #include <cstdlib>
 #include <ctime>
 #include <iomanip>
 #include <iostream>
-#include <limits>
 #include <string>
 
+#include "student.h"
+#include "sort_search.h"
+
 using namespace std;
-
-enum Specialnist { KN, INF, ME, FI, TN };
-
-struct Student
-{
-    string prizv;
-    int kurs;
-    Specialnist spec;
-    int fizyka;
-    int matematyka;
-    int informatyka;
-};
-
-string SpecToStr(Specialnist spec)
-{
-    switch (spec)
-    {
-    case KN:  return "Komp. nauky";
-    case INF: return "Informatyka";
-    case ME:  return "Mat. ta ekon.";
-    case FI:  return "Fiz. ta inf.";
-    case TN:  return "Trud. navch.";
-    default:  return "Unknown";
-    }
-}
-
-double AvgGrade(const Student& s)
-{
-    return (s.fizyka + s.matematyka + s.informatyka) / 3.0;
-}
-
-int CompareAvg(double a, double b)
-{
-    const double eps = 0.01;
-    if (fabs(a - b) < eps)
-        return 0;
-    return (a < b) ? -1 : 1;
-}
-
-// Ключі сортування: 1) назва спеціальності ↑, 2) середній бал ↑, 3) прізвище ↑
-int CompareKeys(Specialnist specA, double avgA, const string& prizvA,
-                Specialnist specB, double avgB, const string& prizvB)
-{
-    string sA = SpecToStr(specA);
-    string sB = SpecToStr(specB);
-    if (sA != sB)
-        return (sA < sB) ? -1 : 1;
-
-    int avgCmp = CompareAvg(avgA, avgB);
-    if (avgCmp != 0)
-        return avgCmp;
-
-    if (prizvA != prizvB)
-        return (prizvA < prizvB) ? -1 : 1;
-    return 0;
-}
-
-int ReadInt(const string& prompt, int minVal, int maxVal)
-{
-    int val = 0;
-    while (true)
-    {
-        cout << prompt;
-        if (cin >> val && val >= minVal && val <= maxVal)
-        {
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            return val;
-        }
-        cout << "Error! Enter integer [" << minVal << ".." << maxVal << "]." << endl;
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    }
-}
-
-double ReadDouble(const string& prompt, double minVal, double maxVal)
-{
-    double val = 0.0;
-    while (true)
-    {
-        cout << prompt;
-        if (cin >> val && val >= minVal && val <= maxVal)
-        {
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            return val;
-        }
-        cout << "Error! Enter number [" << minVal << ".." << maxVal << "]." << endl;
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    }
-}
-
-string ReadLine(const string& prompt)
-{
-    string s;
-    while (true)
-    {
-        cout << prompt;
-        getline(cin, s);
-        if (!s.empty() && s.back() == '\r')
-            s.pop_back();
-        if (!s.empty())
-            return s;
-        cout << "Error! String cannot be empty." << endl;
-    }
-}
-
-void Create(Student* p, const int N)
-{
-    for (int i = 0; i < N; i++)
-    {
-        cout << "Student #" << i + 1 << ":" << endl;
-        p[i].prizv = ReadLine("  prizvyshche: ");
-        p[i].kurs = ReadInt("  kurs (1..6): ", 1, 6);
-        int sc = ReadInt("  spec (0-KN, 1-INF, 2-ME, 3-FI, 4-TN): ", 0, 4);
-        p[i].spec = static_cast<Specialnist>(sc);
-        p[i].fizyka = ReadInt("  fizyka (2..5): ", 2, 5);
-        p[i].matematyka = ReadInt("  matematyka (2..5): ", 2, 5);
-        p[i].informatyka = ReadInt("  informatyka (2..5): ", 2, 5);
-        cout << endl;
-    }
-}
-
-void AutoCreate(Student* p, const int N)
-{
-    const char* surnames[] = {
-        "Ivanenko", "Petrenko", "Kovalenko", "Melnyk", "Shevchenko",
-        "Bondar", "Tkachenko", "Kravchenko", "Oliinyk", "Savchenko",
-        "Hnatiuk", "Boiko", "Yakovenko", "Lysenko", "Pavlenko",
-        "Romanenko", "Polishchuk", "Marchenko", "Dmytruk", "Sydorenko"
-    };
-    const int pool = static_cast<int>(sizeof(surnames) / sizeof(surnames[0]));
-
-    int perm[20];
-    for (int i = 0; i < pool; i++)
-        perm[i] = i;
-    for (int i = pool - 1; i > 0; i--)
-        swap(perm[i], perm[rand() % (i + 1)]);
-
-    for (int i = 0; i < N; i++)
-    {
-        p[i].prizv = surnames[perm[i % pool]];
-        p[i].kurs = 1 + rand() % 6;
-        p[i].spec = static_cast<Specialnist>(rand() % 5);
-        p[i].fizyka = 2 + rand() % 4;
-        p[i].matematyka = 2 + rand() % 4;
-        p[i].informatyka = 2 + rand() % 4;
-    }
-}
-
-void PrintTableRow(int rowNum, const Student& s)
-{
-    cout << "| " << setw(2) << right << rowNum << " "
-         << "| " << setw(12) << left << s.prizv << " "
-         << "| " << setw(4) << right << s.kurs << " "
-         << "| " << setw(13) << left << SpecToStr(s.spec) << " "
-         << "| " << setw(6) << right << s.fizyka << " "
-         << "| " << setw(10) << right << s.matematyka << " "
-         << "| " << setw(11) << right << s.informatyka << " |" << endl;
-}
-
-void Print(const Student* p, const int N)
-{
-    cout << "Spysok studentiv (Riven A):" << endl;
-    cout << "+----+--------------+------+---------------+--------+------------+-------------+" << endl;
-    cout << "| #  | Prizvyshche  | Kurs | Spetsialnist  | Fizyka | Matematyka | Informatyka |" << endl;
-    cout << "+----+--------------+------+---------------+--------+------------+-------------+" << endl;
-    for (int i = 0; i < N; i++)
-        PrintTableRow(i + 1, p[i]);
-    cout << "+----+--------------+------+---------------+--------+------------+-------------+" << endl << endl;
-}
-
-void Sort(Student* p, const int N)
-{
-    for (int i0 = 0; i0 < N - 1; i0++)
-        for (int i1 = 0; i1 < N - i0 - 1; i1++)
-            if (CompareKeys(p[i1].spec, AvgGrade(p[i1]), p[i1].prizv,
-                            p[i1 + 1].spec, AvgGrade(p[i1 + 1]), p[i1 + 1].prizv) > 0)
-                swap(p[i1], p[i1 + 1]);
-}
-
-int* IndexSort(const Student* p, const int N)
-{
-    int* I = new int[N];
-    for (int i = 0; i < N; i++)
-        I[i] = i;
-
-    for (int i = 1; i < N; i++)
-    {
-        int val = I[i];
-        int j = i - 1;
-        while (j >= 0 &&
-               CompareKeys(p[I[j]].spec, AvgGrade(p[I[j]]), p[I[j]].prizv,
-                           p[val].spec, AvgGrade(p[val]), p[val].prizv) > 0)
-        {
-            I[j + 1] = I[j];
-            j--;
-        }
-        I[j + 1] = val;
-    }
-    return I;
-}
-
-void PrintIndexSorted(const Student* p, const int* I, const int N)
-{
-    cout << "Spysok studentiv (indeksno vporyadkovanyi, Riven A):" << endl;
-    cout << "+----+--------------+------+---------------+--------+------------+-------------+" << endl;
-    cout << "| #  | Prizvyshche  | Kurs | Spetsialnist  | Fizyka | Matematyka | Informatyka |" << endl;
-    cout << "+----+--------------+------+---------------+--------+------------+-------------+" << endl;
-    for (int i = 0; i < N; i++)
-        PrintTableRow(i + 1, p[I[i]]);
-    cout << "+----+--------------+------+---------------+--------+------------+-------------+" << endl << endl;
-}
-
-int BinSearch(const Student* p, const int N, const string& prizv, Specialnist spec, double avg)
-{
-    int L = 0, R = N - 1;
-    while (L <= R)
-    {
-        int m = (L + R) / 2;
-        int cmp = CompareKeys(p[m].spec, AvgGrade(p[m]), p[m].prizv, spec, avg, prizv);
-        if (cmp == 0)
-            return m;
-        if (cmp < 0)
-            L = m + 1;
-        else
-            R = m - 1;
-    }
-    return -1;
-}
 
 void RunAllAuto(Student* p, const int N, bool& isCreated, bool& isSorted)
 {
@@ -265,6 +38,9 @@ void RunAllAuto(Student* p, const int N, bool& isCreated, bool& isSorted)
     int found = BinSearch(p, N, target.prizv, target.spec, targetAvg);
     int notFound = BinSearch(p, N, "Nevidomyi", KN, 5.00);
 
+    ios::fmtflags oldFlags = cout.flags();
+    streamsize oldPrec = cout.precision();
+
     cout << "=== 4. Binarnyi poshuk (avtoperevirka) ===" << endl;
     cout << fixed << setprecision(2);
     cout << "  Poshuk isnuiuchoho: " << SpecToStr(target.spec)
@@ -272,6 +48,9 @@ void RunAllAuto(Student* p, const int N, bool& isCreated, bool& isSorted)
     cout << (found != -1 ? "  -> Znaiideno v pozytsii " + to_string(found + 1) + "." : "  -> Ne znaiideno.") << endl;
     cout << "  Poshuk vidsutnoho:  " << SpecToStr(KN) << ", ser. bal 5.00, Nevidomyi" << endl;
     cout << (notFound == -1 ? "  -> Shukanoho studenta ne znaiideno." : "  -> Znaiideno.") << endl;
+
+    cout.flags(oldFlags);
+    cout.precision(oldPrec);
 }
 
 int main()
